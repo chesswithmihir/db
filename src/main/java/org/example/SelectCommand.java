@@ -1,4 +1,8 @@
 package org.example;
 
-public class SelectCommand extends Command {
+public class SelectCommand implements Command {
+    @Override
+    public void execute(Database database) {
+
+    }
 }

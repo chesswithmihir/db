@@ -1,84 +1,120 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Parser {
-
     public Command parseCommand(String input) {
-        // Parse the input and return the corresponding command object
-        // Implement the parsing logic here
+        String[] tokens = input.trim().split("\\s+");
+        String commandType = tokens[0].toLowerCase();
+
+        switch (commandType) {
+            case "create":
+                return parseCreateCommand(tokens);
+            case "load":
+                return parseLoadCommand(tokens);
+            case "store":
+                return parseStoreCommand(tokens);
+            case "drop":
+                return parseDropCommand(tokens);
+            case "insert":
+                return parseInsertCommand(tokens);
+            case "print":
+                return parsePrintCommand(tokens);
+            case "select":
+                return parseSelectCommand(tokens);
+            default:
+                throw new IllegalArgumentException("Unknown command type: " + commandType);
+        }
+    }
+
+    private CreateTableCommand parseCreateCommand(String[] tokens) {
+        if (tokens.length < 5 || !tokens[0].equalsIgnoreCase("create") || !tokens[1].equalsIgnoreCase("table")
+                || !tokens[3].startsWith("(") || !tokens[tokens.length - 1].endsWith(")")) {
+            throw new IllegalArgumentException("Invalid create table command format");
+        }
+
+        String tableName = tokens[2];
+        String columnDefsString = String.join(" ", Arrays.copyOfRange(tokens, 3, tokens.length));
+        columnDefsString = columnDefsString.substring(1, columnDefsString.length() - 1);
+
+        String[] columnDefs = columnDefsString.split(",");
+
+        List<Column> columns = new ArrayList<>();
+
+        for (String columnDef : columnDefs) {
+            String[] parts = columnDef.trim().split(" ");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Invalid column definition: " + columnDef);
+            }
+            String columnName = parts[0];
+            String typeName = parts[1];
+            DataType dataType = DataType.fromString(typeName);
+
+            Column column = new Column(columnName, dataType);
+            columns.add(column);
+        }
+
+        return new CreateTableCommand(tableName, columns);
+    }
+
+
+    private LoadCommand parseLoadCommand(String[] tokens) {
+        if (tokens.length != 2) {
+            throw new IllegalArgumentException("Invalid load command format");
+        }
+
+        String tableName = tokens[1];
+        return new LoadCommand(tableName);
+    }
+
+    private StoreCommand parseStoreCommand(String[] tokens) {
+        if (tokens.length != 2) {
+            throw new IllegalArgumentException("Invalid store command format");
+        }
+
+        String tableName = tokens[1];
+        return new StoreCommand(tableName);
+    }
+
+    private DropTableCommand parseDropCommand(String[] tokens) {
+        if (tokens.length != 3 || !tokens[1].equalsIgnoreCase("table")) {
+            throw new IllegalArgumentException("Invalid drop table command format");
+        }
+
+        String tableName = tokens[2];
+        return new DropTableCommand(tableName);
+    }
+
+    private InsertCommand parseInsertCommand(String[] tokens) {
+        // Implement parsing logic for insert command
         // ...
         return null;
     }
 
-    private CreateTableCommand parseCreateCommand(String args) {
-        // Parse the args for create table command and return a CreateTableCommand instance
+    private PrintCommand parsePrintCommand(String[] tokens) {
+        // Implement parsing logic for print command
         // ...
         return null;
     }
 
-    private LoadCommand parseLoadCommand(String args) {
-        // Parse the args for load command and return a LoadCommand instance
+    private SelectCommand parseSelectCommand(String[] tokens) {
+        // Implement parsing logic for select command
         // ...
         return null;
     }
 
-    // Add similar methods for other command types
+    public static void main(String[] args) {
+        // Example usage of the Parser class
+        Parser parser = new Parser();
+        String userInput = "create table students (id int, name string)";
 
-    /**
-     * package org.example;
-     *
-     * public class Parser {
-     *     // Optional constructor
-     *     public Parser() {
-     *         // Any initialization or setup code you need
-     *         // ...
-     *     }
-     *
-     *     public Command parseCommand(String input) {
-     *         String[] parts = input.trim().split("\\s+", 2);
-     *         String commandType = parts[0].toLowerCase();
-     *
-     *         switch (commandType) {
-     *             case "create":
-     *                 return parseCreateCommand(parts[1]);
-     *             case "load":
-     *                 return parseLoadCommand(parts[1]);
-     *             // Add more cases for other command types
-     *             default:
-     *                 throw new IllegalArgumentException("Invalid command type");
-     *         }
-     *     }
-     *
-     *     private CreateTableCommand parseCreateCommand(String args) {
-     *         // Example args: "table my_table (id int, name string)"
-     *         String[] parts = args.split("\\s+", 2);
-     *         if (!parts[0].equalsIgnoreCase("table")) {
-     *             throw new IllegalArgumentException("Invalid create table command");
-     *         }
-     *
-     *         String tableName = parts[1].substring(0, parts[1].indexOf('(')).trim();
-     *         String columnsPart = parts[1].substring(parts[1].indexOf('(') + 1, parts[1].indexOf(')')).trim();
-     *         String[] columnDefs = columnsPart.split(",");
-     *
-     *         List<Column> columns = new ArrayList<>();
-     *         for (String columnDef : columnDefs) {
-     *             String[] columnParts = columnDef.trim().split("\\s+");
-     *             String columnName = columnParts[0];
-     *             String dataTypeName = columnParts[1];
-     *
-     *             DataType dataType = // Get the DataType based on dataTypeName
-     *             columns.add(new Column(columnName, dataType));
-     *         }
-     *
-     *         return new CreateTableCommand(tableName, columns);
-     *     }
-     *
-     *     private LoadCommand parseLoadCommand(String args) {
-     *         // Example args: "my_table"
-     *         String tableName = args.trim();
-     *         return new LoadCommand(tableName);
-     *     }
-     *
-     *     // Add similar methods for other command types
-     * }
-     * */
+        // Create a Database instance
+        Database database = new Database();
+
+        // Parse the command and execute it with the Database instance
+        Command command = parser.parseCommand(userInput);
+        command.execute(database); // Execute the parsed command with the Database instance
+    }
 }

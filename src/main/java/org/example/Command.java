@@ -1,4 +1,5 @@
 package org.example;
 
-public class Command {
+public interface Command {
+    void execute(Database database);
 }
