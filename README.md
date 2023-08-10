@@ -1,5 +1,20 @@
 # Database Management System Architecture Design
 
+## Commands
+
+The commands include:
+
+1. `create table`
+2. `load`
+3. `store`
+4. `drop table`
+5. `insert into`
+6. `print`
+7. `select`
+
+
+## Project Overview
+
 ### User Interaction:
 
 1. **User Input**: Users interact with the database system through a command-line interface. They input various commands to perform actions such as creating tables, inserting data, querying, and more.
@@ -81,4 +96,66 @@
 - Data Integrity: The system ensures data integrity by managing column constraints and handling errors.
 
 This architectural design provides a comprehensive overview of the project's structure, user interaction, data storage, processing, and output. As you start implementing each component, you can follow this design to create a well-structured and functional database management system.
+
+## ACID Properties
+
+### Atomicity:
+
+- **Design Aspect**: The architecture includes a command processing engine and a command executor. These components ensure that commands are executed as atomic units of work.
+
+- **How it Aligns**: The system processes each command in its entirety or not at all. If an error occurs during command execution, the system rolls back any changes made, ensuring that the database remains in a consistent state.
+
+### Consistency:
+
+- **Design Aspect**: The system enforces data integrity through column constraints, validation checks, and error handling. It also provides mechanisms to ensure data consistency across tables.
+
+- **How it Aligns**: The system ensures that the database remains in a consistent state by validating data before insertion and enforcing primary key constraints. It prevents data corruption by rejecting invalid commands or data that could lead to inconsistency.
+
+### Isolation:
+
+- **Design Aspect**: The architecture doesn't explicitly mention isolation, but isolation is a crucial aspect of a database system. It ensures that multiple transactions can occur concurrently without interfering with each other.
+
+- **How it Aligns**: While the architectural design doesn't provide explicit details on transaction isolation, it's an important consideration when implementing the data manipulation and storage components. Isolation ensures that concurrent transactions don't result in conflicts or data inconsistencies.
+
+### Durability:
+
+- **Design Aspect**: The `FileManager` class handles data persistence to files, ensuring that changes made to the database are durable even after system shutdown.
+
+- **How it Aligns**: The architectural design aligns with durability by persisting data changes to files. This ensures that data modifications made by users are stored safely and can be retrieved even after a system crash or restart.
+
+## Java Classes
+
+1. `App`: The entry point of your application where you'll initiate interaction with the database.
+
+2. `Column`: A class representing the columns in a table, containing information like column name and data type.
+
+3. `Command`: A base class representing database commands. It should be extended by specific command classes like `CreateTableCommand`, `LoadCommand`, etc.
+
+4. `Database`: A class to manage the tables and execute commands within the database.
+
+5. `DataType`: A class representing data types, associating custom type names with Java types.
+
+6. `FileManager`: A class responsible for loading and storing data to files.
+
+7. `Parser`: A class responsible for parsing user input and creating corresponding command objects.
+
+8. `Query`: A class for handling select queries and filtering rows based on conditions (optional).
+
+9. `Row`: A class representing a row in a table.
+
+10. `Table`: A class representing a table in the database, containing columns and rows.
+
+11. `CreateTableCommand`: A class representing the "create table" command. Extends `Command`.
+
+12. `LoadCommand`: A class representing the "load" command. Extends `Command`.
+
+13. `StoreCommand`: A class representing the "store" command. Extends `Command`.
+
+14. `DropTableCommand`: A class representing the "drop table" command. Extends `Command`.
+
+15. `InsertIntoCommand`: A class representing the "insert into" command. Extends `Command`.
+
+16. `PrintCommand`: A class representing the "print" command. Extends `Command`.
+
+17. `SelectCommand`: A class representing the "select" command. Extends `Command`. (optional)
 
