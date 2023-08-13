@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,8 @@ public class Parser {
     }
 
     private CreateTableCommand parseCreateCommand(String[] tokens) {
+        // TODO create table <table name> (<column0 name> <type0>, <column1 name> <type1>, ...)
+
         if (tokens.length < 5 || !tokens[0].equalsIgnoreCase("create") || !tokens[1].equalsIgnoreCase("table")
                 || !tokens[3].startsWith("(") || !tokens[tokens.length - 1].endsWith(")")) {
             throw new IllegalArgumentException("Invalid create table command format");
@@ -61,10 +64,10 @@ public class Parser {
 
 
     private LoadCommand parseLoadCommand(String[] tokens) {
+        // TODO load <table name>
         if (tokens.length != 2) {
             throw new IllegalArgumentException("Invalid load command format");
         }
-
         String tableName = tokens[1];
         return new LoadCommand(tableName);
     }
@@ -94,9 +97,14 @@ public class Parser {
     }
 
     private PrintCommand parsePrintCommand(String[] tokens) {
-        // Implement parsing logic for print command
-        // ...
-        return null;
+        // TODO print <table name>
+        if (tokens.length != 2) {
+            throw new IllegalArgumentException("Invalid store command format");
+        }
+
+        String tableName = tokens[1];
+        return new PrintCommand(tableName);
+
     }
 
     private SelectCommand parseSelectCommand(String[] tokens) {

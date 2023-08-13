@@ -33,4 +33,27 @@ public class DataType {
                 throw new IllegalArgumentException("Invalid data type: " + typeName);
         }
     }
+
+    public Object parseValue(String value) {
+        if (this == STRING) {
+            if (value.startsWith("'") && value.endsWith("'")) {
+                return value.substring(1, value.length() - 1); // Remove single quotes
+            }
+            throw new IllegalArgumentException("Invalid string value format: " + value);
+        } else if (this == INT) {
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid int value format: " + value);
+            }
+        } else if (this == FLOAT) {
+            try {
+                return Float.parseFloat(value);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid float value format: " + value);
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported data type: " + this.name);
+        }
+    }
 }

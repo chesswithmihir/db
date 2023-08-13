@@ -1,5 +1,7 @@
 package org.example;
 
+import java.io.IOException;
+
 public class StoreCommand implements Command {
     private String tableName;
 
@@ -9,8 +11,12 @@ public class StoreCommand implements Command {
 
     @Override
     public void execute(Database database) {
-        // Implement the logic to store the table in the database to a file
-        // You will need to get the table from the database, serialize it, and write to a file
-        // ...
+        try {
+            Table table = database.getTable(tableName);
+            FileManager.storeTable(table);
+            System.out.println("Table " + tableName + " stored successfully.");
+        } catch (IOException e) {
+            System.err.println("Error storing table " + tableName + ": " + e.getMessage());
+        }
     }
 }

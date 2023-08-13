@@ -26,4 +26,8 @@ public class Database {
     public void removeTable(String tableName) {
         tables.remove(tableName);
     }
+
+    public boolean hasTable(String tableName) {
+        return tables.containsKey(tableName);
+    }
 }
