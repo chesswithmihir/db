@@ -12,9 +12,10 @@ public class CreateTableCommand implements Command {
     }
 
     @Override
-    public void execute(Database database) {
+    public Table execute(Database database) {
         Table newTable = new Table(tableName, columns);
         database.addTable(newTable);
         System.out.println("Table " + tableName + " created successfully.");
+        return newTable;
     }
 }

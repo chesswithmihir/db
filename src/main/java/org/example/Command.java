@@ -1,5 +1,5 @@
 package org.example;
 
 public interface Command {
-    void execute(Database database);
+    Table execute(Database database);
 }

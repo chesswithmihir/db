@@ -12,6 +12,49 @@ The commands include:
 6. `print`
 7. `select`
 
+## An example
+
+```commandline
+> load fans
+Table fans loaded successfully.
+> print fans
+Lastname string,Firstname string,TeamName string
+Lee,Maurice,Mets
+Lee,Maurice,Steelers
+Ray,Mitas,Patriots
+Hwang,Alex,Cloud9
+Rulison,Jared,EnVyUs
+Fang,Vivian,Golden Bears
+> create table students (id int, name string)
+Table students created successfully.
+> print students
+id int,name string
+> insert into students values 123,'Mihir'
+Row inserted successfully
+> print students
+id int,name string
+123,''Mihir''
+> select Lastname from fans
+Processing column: Lastname
+Lastname
+'Lee'
+'Lee'
+'Ray'
+'Hwang'
+'Rulison'
+'Fang'
+
+> select Lastname from fans where Lastname = 'Hwang'
+Processing column: Lastname
+Lastname
+'Hwang'
+
+> select Lastname from fans where Lastname = 'Lee'
+Processing column: Lastname
+Lastname
+'Lee'
+'Lee'
+```
 
 ## Project Overview
 
@@ -95,7 +138,7 @@ The commands include:
 - Separation of Concerns: Each class has a specific role, improving code organization and maintainability.
 - Data Integrity: The system ensures data integrity by managing column constraints and handling errors.
 
-This architectural design provides a comprehensive overview of the project's structure, user interaction, data storage, processing, and output. As you start implementing each component, you can follow this design to create a well-structured and functional database management system.
+This architectural design provides a comprehensive overview of the project's structure, user interaction, data storage, processing, and output.
 
 ## ACID Properties
 
@@ -125,7 +168,7 @@ This architectural design provides a comprehensive overview of the project's str
 
 ## Java Classes
 
-1. `App`: The entry point of your application where you'll initiate interaction with the database.
+1. `App`: The entry point of the application where the program initiates interaction with the database.
 
 2. `Column`: A class representing the columns in a table, containing information like column name and data type.
 

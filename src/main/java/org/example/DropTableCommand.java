@@ -8,7 +8,7 @@ public class DropTableCommand implements Command {
     }
 
     @Override
-    public void execute(Database database) {
+    public Table execute(Database database) {
         Table table = database.getTable(tableName);
         if (table != null) {
             database.removeTable(tableName);
@@ -16,5 +16,6 @@ public class DropTableCommand implements Command {
         } else {
             System.err.println("Table " + tableName + " does not exist.");
         }
+        return table;
     }
 }

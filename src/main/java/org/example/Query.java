@@ -14,7 +14,16 @@ public class Query {
         this.whereConditions = whereConditions;
     }
 
-
+    private DataType findColumnDataType(String columnName, List<Table> selectedTables) {
+        for (Table table : selectedTables) {
+            for (Column column : table.getColumns()) {
+                if (column.getName().equals(columnName)) {
+                    return column.getDataType();
+                }
+            }
+        }
+        throw new IllegalArgumentException("Column not found: " + columnName);
+    }
     private int compareValues(Object value1, Object value2) {
         if (value1 instanceof Integer && value2 instanceof Integer) {
             return ((Integer) value1).compareTo((Integer) value2);
@@ -50,12 +59,17 @@ public class Query {
             Object rowValue = row.getValue(columnIndex);
             boolean conditionMet = false;
 
+
+
             if (operator.equals("=")) {
-                conditionMet = rowValue.equals(DataType.fromString(value).parseValue(value));
+                DataType columnDataType = findColumnDataType(columnName, selectedTables);
+                conditionMet = rowValue.equals(columnDataType.parseValue(value));
             } else if (operator.equals("<")) {
-                conditionMet = compareValues(rowValue, DataType.fromString(value).parseValue(value)) < 0;
+                DataType columnDataType = findColumnDataType(columnName, selectedTables);
+                conditionMet = compareValues(rowValue, columnDataType.parseValue(value)) < 0;
             } else if (operator.equals(">")) {
-                conditionMet = compareValues(rowValue, DataType.fromString(value).parseValue(value)) > 0;
+                DataType columnDataType = findColumnDataType(columnName, selectedTables);
+                conditionMet = compareValues(rowValue, columnDataType.parseValue(value)) > 0;
             }
 
             if (conditionMet) {
@@ -64,6 +78,7 @@ public class Query {
         }
         return filteredRows;
     }
+
     public Table execute(Database database) {
         // Step 1: Retrieve tables from the database
         List<Table> selectedTables = new ArrayList<>();
@@ -86,8 +101,8 @@ public class Query {
         // Step 3: Create a new result table with selected columns
         List<Column> resultColumns = new ArrayList<>();
         for (String columnName : selectColumns) {
-            // TODO: Find the appropriate column from the selected tables and add it to resultColumns
-            // You might need to handle column name conflicts here
+            System.out.println("Processing column: " + columnName);
+
             Column resultColumn = null;
             for (Table table : selectedTables) {
                 for (Column column : table.getColumns()) {
@@ -111,24 +126,22 @@ public class Query {
         for (Row row : filteredRows) {
             Row resultRow = new Row();
             for (String columnName : selectColumns) {
-                // TODO: Find the corresponding value from the filtered rows and add it to resultRow
                 Object value = null;
                 for (Table table : selectedTables) {
-                    for (Column column : table.getColumns()) {
-                        if (column.getName().equals(columnName)) {
-                            int columnIndex = table.getColumnNames().indexOf(columnName);
-                            value = row.getValue(columnIndex);
-                            break;
-                        }
-                    }
-                    if (value != null) {
+                    int columnIndex = table.getColumnNames().indexOf(columnName);
+                    if (columnIndex != -1) {
+                        value = row.getValue(columnIndex);
                         break;
                     }
+                }
+                if (value == null) {
+                    throw new IllegalArgumentException("Column not found: " + columnName);
                 }
                 resultRow.addValue(value);
             }
             resultTable.addRow(resultRow);
         }
+
 
         // Step 5: Return the result table
         return resultTable;

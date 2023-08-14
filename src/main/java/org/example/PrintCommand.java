@@ -11,11 +11,11 @@ public class PrintCommand implements Command {
         this.tableName = tableName;
     }
     @Override
-    public void execute(Database database) {
+    public Table execute(Database database) {
         Table table = database.getTable(tableName);
         if (table == null) {
             System.out.println("Table not found: " + tableName);
-            return;
+            return table;
         }
 
         List<Column> columns = table.getColumns();
@@ -41,5 +41,6 @@ public class PrintCommand implements Command {
             }
             System.out.println(String.join(",", rowValues));
         }
+        return table;
     }
 }

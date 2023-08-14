@@ -1,7 +1,13 @@
 package org.example;
 
 import org.junit.Test;
+
+import javax.xml.crypto.Data;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 public class ParserTest {
@@ -36,7 +42,6 @@ public class ParserTest {
         // Now, let's check if the database has the expected table
         assertTrue(database.hasTable("students"));
 
-        // You can also check other conditions related to the created table
         Table studentsTable = database.getTable("students");
         assertNotNull(studentsTable);
         assertEquals("students", studentsTable.getName());
@@ -152,11 +157,48 @@ public class ParserTest {
     @Test
     public void testSelectBasic() {
         Parser parser = new Parser();
-        String userInput = "select Lastname from fans";
+        String userInput = "load fans";
+        Database database = new Database();
+
+        // Parse the command and execute it with the Database instance
+        Command command = parser.parseCommand(userInput);
+        command.execute(database); // Execute the parsed command with the Database instance
+
+        assertTrue(database.hasTable("fans"));
+
+        parser = new Parser();
+        userInput = "select Lastname from fans";
+        command = parser.parseCommand(userInput);
+        Table result = ((SelectCommand) command).execute(database); // Cast the command to SelectCommand and call execute
+
+        // Expected output
+        String expectedOutput = "Lastname\n'Lee'\n'Lee'\n'Ray'\n'Hwang'\n'Rulison'\n'Fang'\n";
+
+        // Actual output
+        String actualOutput = result.toString();
+
+        // Compare expected and actual outputs
+        assertEquals(expectedOutput, actualOutput);
+    }
+
+    @Test
+    public void testSelectMedium() {
+        Parser parser = new Parser();
+        String userInput = "load fans";
         Database database = new Database();
 
         Command command = parser.parseCommand(userInput);
         command.execute(database);
 
+        assertTrue(database.hasTable("fans"));
+
+        parser = new Parser();
+        userInput = "select Lastname from fans where Lastname = 'Hwang'";
+        command = parser.parseCommand(userInput);
+        command.execute(database);
+
+
+
     }
+
 }

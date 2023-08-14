@@ -12,18 +12,18 @@ public class InsertCommand implements Command {
     }
 
     @Override
-    public void execute(Database database) {
+    public Table execute(Database database) {
         Table table = database.getTable(tableName);
         if (table == null) {
             System.out.println("Table not found: " + tableName);
-            return;
+            return table;
         }
 
         List<Column> columns = table.getColumns();
 
         if (values.size() != columns.size()) {
             System.out.println("Number of values doesn't match number of columns");
-            return;
+            return table;
         }
 
         Row row = new Row();
@@ -37,11 +37,12 @@ public class InsertCommand implements Command {
                 row.addValue(value);
             } catch (IllegalArgumentException e) {
                 System.out.println("Error parsing value: " + e.getMessage());
-                return;
+                return table;
             }
         }
 
         table.addRow(row);
         System.out.println("Row inserted successfully");
+        return table;
     }
 }

@@ -140,14 +140,15 @@ public class Parser {
 
         ArrayList<String> listOfTokens = new ArrayList<>();
         for (String s : tokens) {
-            listOfTokens.add(s.toLowerCase());
+            listOfTokens.add(s);
         }
 
         ArrayList<String> selectColumns = new ArrayList<>();
         int i;
         for (i = 1; i < listOfTokens.size(); i++) {
             String currWord = listOfTokens.get(i);
-            if (currWord.equals("from")) {
+            if (currWord.toLowerCase().equals("from")) {
+                i++;
                 break;
             }
             selectColumns.add(currWord);
@@ -156,7 +157,7 @@ public class Parser {
         List<String> fromTables = new ArrayList<>();
         for (; i < listOfTokens.size(); i++) {
             String currWord = listOfTokens.get(i);
-            if (currWord == "where") {
+            if (currWord.toLowerCase().equals("where")) {
                 break;
             }
             fromTables.add(currWord);
@@ -168,10 +169,17 @@ public class Parser {
         if (listOfTokens.contains("where")) {
             // filter
             whereConditions = new ArrayList<>();
-            for (; i < listOfTokens.size(); i++) {
+            String currWords = "";
+            for (i = i+1; i < listOfTokens.size(); i++) {
                 String currWord = listOfTokens.get(i);
-                whereConditions.add(currWord);
+                if (currWord.equalsIgnoreCase("and")) {
+                    whereConditions.add(currWords);
+                    currWords = "";
+                } else {
+                    currWords += currWord + " ";
+                }
             }
+            whereConditions.add(currWords);
         }
 
         Query query = new Query(selectColumns, fromTables, whereConditions);

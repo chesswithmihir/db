@@ -56,4 +56,24 @@ public class Table {
         }
         return columnNames;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        // Add column names
+        sb.append(String.join(",", getColumnNames())).append("\n");
+
+        // Add rows
+        for (Row row : getRows()) {
+            List<String> rowValues = new ArrayList<>();
+            for (Object value : row.getValues()) {
+                rowValues.add(value.toString());
+            }
+            sb.append("'").append(String.join("','", rowValues)).append("'\n");
+        }
+
+        return sb.toString();
+    }
+
 }
