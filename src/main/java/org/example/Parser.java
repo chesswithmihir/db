@@ -1,6 +1,7 @@
 package org.example;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -90,11 +91,23 @@ public class Parser {
         return new DropTableCommand(tableName);
     }
 
+
+
+
     private InsertCommand parseInsertCommand(String[] tokens) {
-        // Implement parsing logic for insert command
-        // ...
-        return null;
+        // TODO insert into <table name> values <literal0>,<literal1>,...
+
+        if (tokens.length < 5 || !tokens[0].equalsIgnoreCase("insert") || !tokens[1].equalsIgnoreCase("into")
+                || !tokens[3].equalsIgnoreCase("values")) {
+            throw new IllegalArgumentException("Invalid insert command format");
+        }
+
+        String tableName = tokens[2];
+        List<String> values = new ArrayList<>(Arrays.asList(tokens).subList(4, tokens.length));
+        values = new ArrayList<>(Arrays.asList(values.get(0).split(",")));
+        return new InsertCommand(tableName, values);
     }
+
 
     private PrintCommand parsePrintCommand(String[] tokens) {
         // TODO print <table name>
@@ -106,12 +119,65 @@ public class Parser {
         return new PrintCommand(tableName);
 
     }
-
-    private SelectCommand parseSelectCommand(String[] tokens) {
-        // Implement parsing logic for select command
+    private Query parseQuery(String[] tokens) {
+        // Implement the logic to parse the input tokens and create a Query instance
+        // Parse the SELECT columns, FROM tables, and WHERE conditions
         // ...
+
+        System.out.println(tokens);
+//        List<String> selectColumns = ...; // Parsed list of SELECT columns
+//        List<String> fromTables = ...;    // Parsed list of FROM tables
+//        List<String> whereConditions = ...; // Parsed list of WHERE conditions
+
+        // return new Query(selectColumns, fromTables, whereConditions);
         return null;
     }
+    private SelectCommand parseSelectCommand(String[] tokens) {
+        // TODO: select <column expr0>,<column expr1>,... from <table0>,<table1>,... where <cond0> and <cond1> and ...
+        if (tokens.length < 4 || !tokens[0].equalsIgnoreCase("select")) {
+            throw new IllegalArgumentException("Invalid insert command format");
+        }
+
+        ArrayList<String> listOfTokens = new ArrayList<>();
+        for (String s : tokens) {
+            listOfTokens.add(s.toLowerCase());
+        }
+
+        ArrayList<String> selectColumns = new ArrayList<>();
+        int i;
+        for (i = 1; i < listOfTokens.size(); i++) {
+            String currWord = listOfTokens.get(i);
+            if (currWord.equals("from")) {
+                break;
+            }
+            selectColumns.add(currWord);
+        }
+
+        List<String> fromTables = new ArrayList<>();
+        for (; i < listOfTokens.size(); i++) {
+            String currWord = listOfTokens.get(i);
+            if (currWord == "where") {
+                break;
+            }
+            fromTables.add(currWord);
+        }
+
+        List<String> whereConditions = null; // Parsed list of WHERE conditions
+        // add logic for where condition,
+        // use filtering as the last step
+        if (listOfTokens.contains("where")) {
+            // filter
+            whereConditions = new ArrayList<>();
+            for (; i < listOfTokens.size(); i++) {
+                String currWord = listOfTokens.get(i);
+                whereConditions.add(currWord);
+            }
+        }
+
+        Query query = new Query(selectColumns, fromTables, whereConditions);
+        return new SelectCommand(query);
+    }
+
 
     public static void main(String[] args) {
         // Example usage of the Parser class

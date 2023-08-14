@@ -1,11 +1,8 @@
 package org.example;
+
 import org.junit.Test;
-
-import javax.xml.crypto.Data;
 import java.io.File;
-
 import static org.junit.Assert.*;
-
 
 public class ParserTest {
     @Test
@@ -125,6 +122,41 @@ public class ParserTest {
         command.execute(database);
 
         assertFalse(database.hasTable("fans"));
+
+    }
+
+    @Test
+    public void testInsertIntoBasic() {
+        // Example usage of the Parser class
+        Parser parser = new Parser();
+        String userInput = "create table students (id int, name string)";
+
+        // Create a Database instance
+        Database database = new Database();
+
+        // Parse the command and execute it with the Database instance
+        Command command = parser.parseCommand(userInput);
+        command.execute(database); // Execute the parsed command with the Database instance
+        assertTrue(database.hasTable("students"));
+
+        userInput = "insert into students values 12345,Mihir";
+        command = parser.parseCommand(userInput);
+        command.execute(database);
+
+        assertTrue(database.hasTable("students"));
+        assertEquals(database.getTable("students").getNumRows(), 1);
+        assertEquals(database.getTable("students").getNumColumns(), 2);
+
+    }
+
+    @Test
+    public void testSelectBasic() {
+        Parser parser = new Parser();
+        String userInput = "select Lastname from fans";
+        Database database = new Database();
+
+        Command command = parser.parseCommand(userInput);
+        command.execute(database);
 
     }
 }

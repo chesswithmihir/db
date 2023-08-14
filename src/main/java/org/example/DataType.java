@@ -56,4 +56,14 @@ public class DataType {
             throw new IllegalArgumentException("Unsupported data type: " + this.name);
         }
     }
+
+    public String toValueString(Object value) {
+        if (this == STRING) {
+            return "'" + value.toString() + "'";
+        } else if (this == INT || this == FLOAT) {
+            return value.toString();
+        } else {
+            throw new IllegalArgumentException("Unsupported data type: " + this.name);
+        }
+    }
 }

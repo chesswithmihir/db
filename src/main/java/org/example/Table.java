@@ -41,6 +41,14 @@ public class Table {
         return new ArrayList<>(rows);
     }
 
+    public int getNumRows() {
+        return rows.size();
+    }
+
+    public int getNumColumns() {
+        return columns.size();
+    }
+
     public List<String> getColumnNames() {
         List<String> columnNames = new ArrayList<>();
         for (Column column : columns) {

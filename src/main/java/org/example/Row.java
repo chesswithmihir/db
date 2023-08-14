@@ -17,4 +17,11 @@ public class Row {
     public void addValue(Object value) {
         values.add(value);
     }
+
+    public Object getValue(int columnIndex) {
+        if (columnIndex >= 0 && columnIndex < values.size()) {
+            return values.get(columnIndex);
+        }
+        throw new IndexOutOfBoundsException("Invalid column index: " + columnIndex);
+    }
 }
